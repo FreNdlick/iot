@@ -56,7 +56,7 @@ def fetch_data(api_url, collection, time_begin, time_end):
             print(f"No 'data' field in the API response. Response: {data}")
             api_failed_requests.inc()
     except requests.RequestException as e:
-        print(f"Failed to fetch data from API for time range {time_begin} to {time_end}: {e}")
+        print(f"Ошибка при обращении в интервале от {time_begin} до {time_end}: {e}")
         api_failed_requests.inc()
 
 def fetch_initial_data(api_url, collection):

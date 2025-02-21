@@ -10,10 +10,8 @@ def parse_and_plot_mongodb_data(database_name, collection_name, mac_address):
     db = client[database_name]
     collection = db[collection_name]
 
-
     query = {"MacAddress": mac_address}
     results = collection.find(query)
-
     #
     data = []
     for result in results:
@@ -25,7 +23,6 @@ def parse_and_plot_mongodb_data(database_name, collection_name, mac_address):
             "DewPointC": float(result["DewPointC"]),
             "DewPointF": float(result["DewPointF"]),
         })
-
 
     if not data:
         return pd.DataFrame()
