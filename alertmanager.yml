@@ -1,0 +1,4 @@
+receivers:
+  - name: 'telegram_webhook'
+    webhook_configs:
+      - url: 'http://<ВАШ_IP_ИЛИ_DOMAIN>:5000/alert'
