@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import os
 from sklearn.ensemble import IsolationForest
-from prometheus_client import Gauge
+from metricsPromet import  anomally_detected
 import telegram
 from dotenv import load_dotenv
 
@@ -14,8 +14,7 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
-# Инициализация метрик Prometheus
-anomally_detected = Gauge('anomally_detected', 'Detected anomaly')
+
 
 
 def detect_anomalies(dataframe):

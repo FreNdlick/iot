@@ -28,3 +28,5 @@ api_iaqi = Gauge('api_iaqi', 'IAQI from API')
 api_pm25 = Gauge('api_pm25', 'PM2.5 from API')
 api_pm10 = Gauge('api_pm10', 'PM10 from API')
 api_pm25_mcp = Gauge('api_pm25_mcp', 'PM2.5 MCP from API')
+
+anomally_detected = Gauge('anomally_detected', 'Detected anomaly')
