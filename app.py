@@ -1,7 +1,8 @@
 import os
 import threading
 from datetime import time
-
+import subprocess
+from pathlib import Path
 from dotenv import load_dotenv
 from prometheus_client import start_http_server
 from metricsPromet import create_sensor_metrics
@@ -23,6 +24,15 @@ BASE_URL = "http://air.krasn.ru/api/2.0/data"
 def main():
     try:
         global collection_mq, collection_api
+
+        try:
+            base = Path(__file__).parent
+            subprocess.Popen([str(base /"tools"/"prometheus-2.54.1.windows-amd64"/
+                                  "prometheus.exe")])
+            subprocess.Popen([str(base /"tools"/"alertmanager-0.28.0.windows-amd64"/"alertmanager.exe")])
+            print("Сервисы запущены")
+        except Exception as e:
+            print(f"Ошибка: {e}")
 
         # Запуск Prometheus сервера
         print("Prometheus server started on port 8000")
