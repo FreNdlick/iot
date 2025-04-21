@@ -6,26 +6,24 @@ import numpy as np
 
 # Подключение к MongoDB
 load_dotenv()
-BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
 MONGO_URL = os.getenv("MONGO_URL")
 MONGO_DB = os.getenv("MONGO_DB")
 MONGO_COLLECTION = os.getenv("MONGO_COLLECTION")
+ANOMALY_COLLECTION = os.getenv("ANOMALY_COLLECTION")
 client = MongoClient(MONGO_URL)
 db = client[MONGO_DB]
-anomalies_collection = db["anomalies"]
-
 sensors_collection = db[MONGO_COLLECTION]
+anomalies_collection = db[ANOMALY_COLLECTION]
 
-# ID датчиков
+
 SENSOR_IDS = ["000DE0163B57", "000DE0163B59", "000DE0163B58", "000DE0163B56"]
 
 # Глобальный словарь для отслеживания состояний аномалий
 anomaly_states = {sensor_id: False for sensor_id in SENSOR_IDS}
 
-
 # Функция вычисления динамических границ
 def calculate_dynamic_bounds(sensor_id):
-    data = list(sensors_collection.find({"sensor_id": sensor_id}).sort("timestamp", -1).limit(100))
+    data = list(sensors_collection.find({"sensor_id": sensor_id}).sort("timestamp", -1).    limit(100))
 
     if not data:
         return None, None  # Нет данных
@@ -42,7 +40,6 @@ def calculate_dynamic_bounds(sensor_id):
 
     return lower_bound, upper_bound
 
-
 # Функция проверки данных на аномалии
 def check_anomaly(sensor_id, value, pm25, alarm_status):
     lower_bound, upper_bound = calculate_dynamic_bounds(sensor_id)
@@ -57,7 +54,6 @@ def check_anomaly(sensor_id, value, pm25, alarm_status):
 
     return is_anomaly
 
-
 # Функция обработки новых данных
 def process_sensor_data(sensor_id, value, pm25, alarm_status):
     global anomaly_states
@@ -70,13 +66,26 @@ def process_sensor_data(sensor_id, value, pm25, alarm_status):
         anomaly_record = {
             "sensor_id": sensor_id,
             "timestamp": datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S"),
-            "data": {"value": value, "PM25": pm25, "AlarmStatus": alarm_status}
+            "data": {
+                "TemperatureC": value,
+                "PM25": pm25,
+                "AlarmStatus": alarm_status
+            }
         }
         anomalies_collection.insert_one(anomaly_record)
         print(f"⚠ Аномалия зафиксирована: {anomaly_record}")
+        return True  # Возвращаем True, если аномалия обнаружена
 
     elif not is_anomaly and anomaly_states[sensor_id]:
         # Завершаем аномалию
         anomaly_states[sensor_id] = False
         print(f"✅ Аномалия на датчике {sensor_id} закончилась.")
+        return False  # Возвращаем False, если аномалия завершена
 
+    return False  # Возвращаем False, если аномалии нет
+
+# Функция для включения/выключения анализа
+def toggle_analysis():
+    global analysis_enabled
+    analysis_enabled = not analysis_enabled
+    return analysis_enabled

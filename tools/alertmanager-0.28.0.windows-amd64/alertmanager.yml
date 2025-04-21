@@ -1,0 +1,25 @@
+global:
+  resolve_timeout: 5m
+  telegram_api_url: https://api.telegram.org
+
+route:
+  receiver: telegram 
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 5m
+  repeat_interval: 10m
+
+
+receivers:
+  - name: telegram
+    telegram_configs:
+      - api_url: 'https://api.telegram.org'
+        bot_token: '7992642499:AAEuOWWLO0le-lzPSJ5NLLwXWk1of-oAZVM'
+        chat_id: 5185727498
+        send_resolved: true
+        message: |
+          {{ range .Alerts }}
+          🚨 {{ .Labels.alertname }} 🚨
+          Оповещение статуса: {{ .Labels.severity }}
+          Пояснение: {{ .Annotations.description }}
+          {{ end }}
