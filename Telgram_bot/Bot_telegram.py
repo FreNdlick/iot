@@ -183,7 +183,7 @@ async def info(update: Update, context: CallbackContext) -> None:
 #/ test_alert
 async def test_alert(update: Update, context: CallbackContext) -> None:
     from metricsPromet import test_alert
-    test_alert= 1;
+    test_alert.set(1)
     commands = (
         "Тестовый алерт сейчас будет отправлен\n"
         "Через prometheus_alertmanager"

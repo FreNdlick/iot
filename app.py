@@ -27,9 +27,23 @@ def main():
 
         try:
             base = Path(__file__).parent
-            subprocess.Popen([str(base /"tools"/"prometheus-2.54.1.windows-amd64"/
-                                  "prometheus.exe")])
-            subprocess.Popen([str(base /"tools"/"alertmanager-0.28.0.windows-amd64"/"alertmanager.exe")])
+
+            # Запуск Prometheus с конфигурационным файлом
+            prometheus_path = base / "tools" / "prometheus-2.54.1.windows-amd64" / "prometheus.exe"
+            prometheus_config = base / "tools" / "prometheus-2.54.1.windows-amd64" / "prometheus.yml"
+            subprocess.Popen([
+                str(prometheus_path),
+                f"--config.file={prometheus_config}"
+            ])
+
+            # Запуск Alertmanager с конфигурационным файлом
+            alertmanager_path = base / "tools" / "alertmanager-0.28.0.windows-amd64" / "alertmanager.exe"
+            alertmanager_config = base / "tools" / "alertmanager-0.28.0.windows-amd64" / "alertmanager.yml"
+            subprocess.Popen([
+                str(alertmanager_path),
+                f"--config.file={alertmanager_config}"
+            ])
+
             print("Сервисы запущены")
         except Exception as e:
             print(f"Ошибка: {e}")
