@@ -1,14 +1,15 @@
 import os
 import threading
-from datetime import time
+import time
 import subprocess
 from pathlib import Path
 from dotenv import load_dotenv
 from prometheus_client import start_http_server
 from metricsPromet import create_sensor_metrics
 from Request import start_api_client
-#from Telgram_bot.bot_app import main_bot  # Импортируем функцию для запуска бота
+from Telgram_bot.bot_app import main_bot  # Импортируем функцию для запуска бота
 from Telgram_bot.Bot_telegram import  main_bot
+
 # Инициализация переменных окружения
 load_dotenv()
 MONGO_URL = os.getenv("MONGO_URL")
@@ -23,7 +24,7 @@ BASE_URL = "http://air.krasn.ru/api/2.0/data"
 
 def main():
     try:
-        global collection_mq, collection_api
+
 
         try:
             base = Path(__file__).parent
@@ -61,7 +62,8 @@ def main():
         print(f"Файл сохранен: {result_file}")
 
         # Инициализация метрик для сенсоров
-        sensor_metrics = {
+
+        sensor_metrics= {
             "000DE0163B57": create_sensor_metrics("000DE0163B57"),
             "000DE0163B59": create_sensor_metrics("000DE0163B59"),
             "000DE0163B58": create_sensor_metrics("000DE0163B58"),
@@ -72,8 +74,8 @@ def main():
         from mqqt import start_mqtt_client
 
         # Запуск API клиента в отдельном потоке
-        api_client_thread = threading.Thread(target=start_api_client, args=(BASE_URL, collection_api), daemon=True)
-        api_client_thread.start()
+        #api_client_thread = threading.Thread(target=start_api_client, args=(BASE_URL, collection_api), daemon=True)
+        #api_client_thread.start()
         print("API client thread started")
 
         # Запуск Telegram-бота в отдельном потоке
@@ -87,8 +89,10 @@ def main():
         print("Telegram bot thread started")
 
         # Запуск MQTT клиента
-        start_mqtt_client(MQTT_BROKER_ADDRESS, MQTT_BROKER_PORT, MQTT_TOPICS, collection_mq, sensor_metrics)
-
+        try:
+            start_mqtt_client(MQTT_BROKER_ADDRESS, MQTT_BROKER_PORT, MQTT_TOPICS, collection_mq, sensor_metrics)
+        except Exception as e:
+            print(f"Ошибка в запуске prometheus {e}")
         try:
             while True:
                 time.sleep(1)  # Небольшая задержка, чтобы не нагружать цп

@@ -4,6 +4,32 @@ import pandas as pd
 import json
 from datetime import datetime, timedelta
 import os
+import numpy as np
+
+def save_sensor_data(collection, sensor_data, metrics):
+    """Сохранение данных сенсора и метрик в MongoDB"""
+    doc = {
+        'sensor_id': sensor_data.get('MacAddress'),
+        'timestamp': sensor_data.get('MsgTimeStamp'),
+        'data': {
+            'pm25': sensor_data.get('PM25'),
+            'temperature_c': sensor_data.get('TemperatureC'),
+            'humidity': sensor_data.get('Humidity')
+        },
+        'metrics': {
+            'current': {
+                'pm25': metrics['pm25'][-1] if metrics['pm25'] else None,
+                'temperature_c': metrics['temperature_c'][-1] if metrics['temperature_c'] else None
+            },
+            'stats': {
+                'pm25_high': max(metrics['pm25']) if metrics['pm25'] else None,
+                'pm25_low': min(metrics['pm25']) if metrics['pm25'] else None,
+                'pm25_stddev': np.std(list(metrics['pm25'])) if len(metrics['pm25']) > 1 else None
+            }
+        }
+    }
+    collection.insert_one(doc)
+
 
 def init_db(mongo_url, db_name):
     client = MongoClient(mongo_url)
@@ -128,3 +154,4 @@ def fetch_data_for_period(collection, period='24h'):
     except Exception as e:
         print(f"Ошибка при получении данных за период {period}: {e}")
         return pd.DataFrame()
+
