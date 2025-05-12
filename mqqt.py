@@ -42,6 +42,7 @@ def on_message(client, userdata, msg):
         metrics = userdata["sensor_metrics"][mac_address]
 
         try:
+            metrics_processor.init_sensor(mac_address)
             # Обновляем метрики
             metrics['pm25'].set(float(data.get('PM25', 0)))
             metrics['humidity'].set(float(data.get('Humidity', 0)))

@@ -20,6 +20,23 @@ def create_sensor_metrics(sensor_name):
         'pm25_stddev': Gauge(f'mqtt_{sensor_name}_pm25_stddev', f'PM2.5 standard deviation for {sensor_name}'),
         'temp_stddev': Gauge(f'mqtt_{sensor_name}_temp_stddev', f'Temperature standard deviation for {sensor_name}'),
 
+        'temp_upper_quantile': Gauge(f'mqtt_{sensor_name}_temp_upper_q', f'Temperature 95% quantile bound'),
+        'temp_lower_quantile': Gauge(f'mqtt_{sensor_name}_temp_lower_q', f'Temperature 5% quantile bound'),
+        'temp_upper_stddev': Gauge(f'mqtt_{sensor_name}_temp_upper_std', f'Temperature μ+2σ bound'),
+        'temp_lower_stddev': Gauge(f'mqtt_{sensor_name}_temp_lower_std', f'Temperature μ-2σ bound'),
+
+        # Производные метрики для влажности
+        'humidity_upper_quantile': Gauge(f'mqtt_{sensor_name}_humidity_upper_q', f'Humidity 95% quantile bound'),
+        'humidity_lower_quantile': Gauge(f'mqtt_{sensor_name}_humidity_lower_q', f'Humidity 5% quantile bound'),
+
+        # Производные метрики для точки росы
+        'dew_point_rate': Gauge(f'mqtt_{sensor_name}_dew_point_rate', f'Dew point change rate (C/min)'),
+        'dew_point_upper_quantile': Gauge(f'mqtt_{sensor_name}_dew_point_upper_q', f'Dew point 95% quantile bound'),
+        'dew_point_lower_quantile': Gauge(f'mqtt_{sensor_name}_dew_point_lower_q', f'Dew point 5% quantile bound'),
+
+        # Специальная метрика для PM2.5 (только проверка на 0)
+        'pm25_alert': Gauge(f'mqtt_{sensor_name}_pm25_alert', 'PM2.5 non-zero alert (1 if > 0)')
+
     }
 api_successful_requests = Counter('api_successful_requests_total', 'Удачные запросы Api')
 api_failed_requests = Counter('api_failed_requests_total', 'Неудачные запросы Api')
