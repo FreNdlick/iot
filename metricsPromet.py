@@ -8,41 +8,36 @@ def create_sensor_metrics(sensor_name):
     return {
         'pm25': Gauge(f'mqtt_{sensor_name}_pm25', f'Последняя отправка PM2.5 на датчике {sensor_name}'),
         'humidity': Gauge(f'mqtt_{sensor_name}_humidity', f'Последняя отправка Влажности на датчике {sensor_name}'),
-        'temperature_c': Gauge(f'mqtt_{sensor_name}_temperature_c', f'Последняя отправка Температуры в Цельсии на датчике{sensor_name}'),
-        'temperature_f': Gauge(f'mqtt_{sensor_name}_temperature_f', f'Последняя отправка Температуры в Фаренгейтахна датчике {sensor_name}'),
-        'dew_point_c': Gauge(f'mqtt_{sensor_name}_dew_point_c', f'Последняя отправка Точки россы в Цельсии на датчике{sensor_name}'),
-        'dew_point_f': Gauge(f'mqtt_{sensor_name}_dew_point_f', f'Последняя отправка Точки россы в Фаренгейтах на датчике {sensor_name}'),
-        'alarm_status': Gauge(f'mqtt_{sensor_name}_alarm_status', f'Последняя отправка Alarm_status на датчике{sensor_name}'),
-
-        'pm25_rate': Gauge(f'mqtt_{sensor_name}_pm25_rate', f'PM2.5 change rate for {sensor_name}'),
-        'temp_rate': Gauge(f'mqtt_{sensor_name}_temp_rate', f'Temperature change rate for {sensor_name}'),
-        'humidity_rate': Gauge(f'mqtt_{sensor_name}_humidity_rate', f'Humidity change rate for {sensor_name}'),
-        'pm25_stddev': Gauge(f'mqtt_{sensor_name}_pm25_stddev', f'PM2.5 standard deviation for {sensor_name}'),
-        'temp_stddev': Gauge(f'mqtt_{sensor_name}_temp_stddev', f'Temperature standard deviation for {sensor_name}'),
-
-        'temp_upper_quantile': Gauge(f'mqtt_{sensor_name}_temp_upper_q', f'Temperature 95% quantile bound'),
-        'temp_lower_quantile': Gauge(f'mqtt_{sensor_name}_temp_lower_q', f'Temperature 5% quantile bound'),
-        'temp_upper_stddev': Gauge(f'mqtt_{sensor_name}_temp_upper_std', f'Temperature μ+2σ bound'),
-        'temp_lower_stddev': Gauge(f'mqtt_{sensor_name}_temp_lower_std', f'Temperature μ-2σ bound'),
-
-        # Производные метрики для влажности
-        'humidity_upper_quantile': Gauge(f'mqtt_{sensor_name}_humidity_upper_q', f'Humidity 95% quantile bound'),
-        'humidity_lower_quantile': Gauge(f'mqtt_{sensor_name}_humidity_lower_q', f'Humidity 5% quantile bound'),
-
-        # Производные метрики для точки росы
-        'dew_point_rate': Gauge(f'mqtt_{sensor_name}_dew_point_rate', f'Dew point change rate (C/min)'),
-        'dew_point_upper_quantile': Gauge(f'mqtt_{sensor_name}_dew_point_upper_q', f'Dew point 95% quantile bound'),
-        'dew_point_lower_quantile': Gauge(f'mqtt_{sensor_name}_dew_point_lower_q', f'Dew point 5% quantile bound'),
-
-        # Специальная метрика для PM2.5 (только проверка на 0)
-        'pm25_alert': Gauge(f'mqtt_{sensor_name}_pm25_alert', 'PM2.5 non-zero alert (1 if > 0)')
-
+        'temperature_c': Gauge(f'mqtt_{sensor_name}_temperature_c', f'Последняя отправка Температуры в Цельсиях на датчике {sensor_name}'),
+        'temperature_f': Gauge(f'mqtt_{sensor_name}_temperature_f', f'Последняя отправка Температуры в Фаренгейтах на датчике {sensor_name}'),
+        'dew_point_c': Gauge(f'mqtt_{sensor_name}_dew_point_c', f'Последняя отправка Точки росы в Цельсиях на датчике {sensor_name}'),
+        'dew_point_f': Gauge(f'mqtt_{sensor_name}_dew_point_f', f'Последняя отправка Точки росы в Фаренгейтах на датчике {sensor_name}'),
+        'alarm_status': Gauge(f'mqtt_{sensor_name}_alarm_status', f'Последняя отправка Статуса тревоги на датчике {sensor_name}'),
+        'pm25_rate': Gauge(f'mqtt_{sensor_name}_pm25_rate', f'Скорость изменения PM2.5 для датчика {sensor_name}'),
+        'temp_rate': Gauge(f'mqtt_{sensor_name}_temp_rate', f'Скорость изменения температуры для датчика {sensor_name}'),
+        'humidity_rate': Gauge(f'mqtt_{sensor_name}_humidity_rate', f'Скорость изменения влажности для датчика {sensor_name}'),
+        'pm25_stddev': Gauge(f'mqtt_{sensor_name}_pm25_stddev', f'Стандартное отклонение PM2.5 для датчика {sensor_name}'),
+        'temp_stddev': Gauge(f'mqtt_{sensor_name}_temp_stddev', f'Стандартное отклонение температуры для датчика {sensor_name}'),
+        'temp_upper_quantile': Gauge(f'mqtt_{sensor_name}_temp_upper_q', f'Верхняя граница температуры (95% квантиль)'),
+        'temp_lower_quantile': Gauge(f'mqtt_{sensor_name}_temp_lower_q', f'Нижняя граница температуры (5% квантиль)'),
+        'temp_upper_stddev': Gauge(f'mqtt_{sensor_name}_temp_upper_std', f'Верхняя граница температуры (μ+2σ)'),
+        'temp_lower_stddev': Gauge(f'mqtt_{sensor_name}_temp_lower_std', f'Нижняя граница температуры (μ-2σ)'),
+        'humidity_upper_quantile': Gauge(f'mqtt_{sensor_name}_humidity_upper_q', f'Верхняя граница влажности (95% квантиль)'),
+        'humidity_lower_quantile': Gauge(f'mqtt_{sensor_name}_humidity_lower_q', f'Нижняя граница влажности (5% квантиль)'),
+        'dew_point_rate': Gauge(f'mqtt_{sensor_name}_dew_point_rate', f'Скорость изменения точки росы (°C/мин)'),
+        'dew_point_upper_quantile': Gauge(f'mqtt_{sensor_name}_dew_point_upper_q', f'Верхняя граница точки росы (95% квантиль)'),
+        'dew_point_lower_quantile': Gauge(f'mqtt_{sensor_name}_dew_point_lower_q', f'Нижняя граница точки росы (5% квантиль)'),
+        'pm25_alert': Gauge(f'mqtt_{sensor_name}_pm25_alert', 'Предупреждение PM2.5 (1 если > 0)'),
+        'temp_trend': Gauge(f'mqtt_{sensor_name}_temp_trend', 'Тренд температуры (°C/мин)'),
+        'humidity_trend': Gauge(f'mqtt_{sensor_name}_humidity_trend', 'Тренд влажности (%/мин)'),
+        'dew_point_trend': Gauge(f'mqtt_{sensor_name}_dew_point_trend', 'Тренд точки росы (°C/мин)'),
+        'temp_humidity_corr': Gauge(f'mqtt_{sensor_name}_temp_humidity_corr', 'Корреляция температуры и влажности'),
     }
+
 api_successful_requests = Counter('api_successful_requests_total', 'Удачные запросы Api')
 api_failed_requests = Counter('api_failed_requests_total', 'Неудачные запросы Api')
 api_data_read = Counter('api_data_read_total', 'Количество прочитанных запросов Api ')
 api_request_duration = Summary('api_request_duration_seconds', 'Время потраченно для обработки Api')
-
 
 api_temperature = Gauge('api_temperature', 'Температура с Api')
 api_pressure = Gauge('api_pressure', 'Давление с Api')

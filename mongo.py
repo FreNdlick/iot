@@ -89,22 +89,16 @@ def fetch_sensor_data_for_day():
             "$regex": regex_pattern
         }
     }
-
     data = list(collection.find(query, {"_id": 0}))
     client.close()
-
     if not data:
         print(f"Данные для датчика {mac_address} за {target_date} не найдены.")
         return None
-
     json_data = json.dumps(data, indent=4)
-
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
-
     filename = f"sensor_data_{mac_address}_{target_date}.json"
     file_path = os.path.join(output_folder, filename)
-
     # Сохраняем JSON в файл
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(json_data)
