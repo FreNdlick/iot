@@ -32,6 +32,23 @@ def create_sensor_metrics(sensor_name):
         'humidity_trend': Gauge(f'mqtt_{sensor_name}_humidity_trend', 'Тренд влажности (%/мин)'),
         'dew_point_trend': Gauge(f'mqtt_{sensor_name}_dew_point_trend', 'Тренд точки росы (°C/мин)'),
         'temp_humidity_corr': Gauge(f'mqtt_{sensor_name}_temp_humidity_corr', 'Корреляция температуры и влажности'),
+        # Новые метрики для БПФ и спектрального анализа
+        'temp_spectral_energy': Gauge(f'mqtt_{sensor_name}_temp_spectral_energy', f'Спектральная энергия температуры для {sensor_name}'),
+        'temp_spectral_centroid': Gauge(f'mqtt_{sensor_name}_temp_spectral_centroid', f'Спектральный центроид температуры для {sensor_name}'),
+        'temp_spectral_bandwidth': Gauge(f'mqtt_{sensor_name}_temp_spectral_bandwidth', f'Спектральная ширина полосы температуры для {sensor_name}'),
+        'temp_dominant_freq': Gauge(f'mqtt_{sensor_name}_temp_dominant_freq', f'Доминирующая частота температуры для {sensor_name}'),
+        'temp_skewness': Gauge(f'mqtt_{sensor_name}_temp_skewness', f'Асимметрия температуры для {sensor_name}'),
+        'temp_kurtosis': Gauge(f'mqtt_{sensor_name}_temp_kurtosis', f'Эксцесс температуры для {sensor_name}'),
+        'humidity_spectral_energy': Gauge(f'mqtt_{sensor_name}_humidity_spectral_energy', f'Спектральная энергия влажности для {sensor_name}'),
+        'humidity_spectral_centroid': Gauge(f'mqtt_{sensor_name}_humidity_spectral_centroid', f'Спектральный центроид влажности для {sensor_name}'),
+        'pm25_spectral_energy': Gauge(f'mqtt_{sensor_name}_pm25_spectral_energy', f'Спектральная энергия PM2.5 для {sensor_name}'),
+        'pm25_spectral_centroid': Gauge(f'mqtt_{sensor_name}_pm25_spectral_centroid', f'Спектральный центроид PM2.5 для {sensor_name}'),
+        'anomaly_score': Gauge(f'mqtt_{sensor_name}_anomaly_score', f'Счет аномалий для {sensor_name}'),
+        # Метрики готовности
+        'metrics_ready_basic': Gauge(f'mqtt_{sensor_name}_metrics_ready_basic', f'Статус готовности базовых метрик для {sensor_name}'),
+        'metrics_ready_statistical': Gauge(f'mqtt_{sensor_name}_metrics_ready_statistical', f'Статус готовности статистических метрик для {sensor_name}'),
+        'metrics_ready_spectral': Gauge(f'mqtt_{sensor_name}_metrics_ready_spectral', f'Статус готовности спектральных метрик для {sensor_name}'),
+        'metrics_ready_anomaly': Gauge(f'mqtt_{sensor_name}_metrics_ready_anomaly', f'Статус готовности обнаружения аномалий для {sensor_name}')
     }
 
 api_successful_requests = Counter('api_successful_requests_total', 'Удачные запросы Api')

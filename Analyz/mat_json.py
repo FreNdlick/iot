@@ -349,7 +349,7 @@ def plot_all_correlations(sensor_data, parameter="TemperatureC", save_dir="senso
 if __name__ == "__main__":
     # Параметры подключения к MongoDB
     mongodb_connection_string = "mongodb://localhost:27017"  # Замените на ваш URI
-    database_name = "my_database"  # Замените на имя вашей базы данных
+    database_name = "mqtt_database"  # Замените на имя вашей базы данных
     collection_name = "your_collection"  # Замените на имя вашей коллекции
 
     query = {}  # Пример запроса (можно оставить пустым для выбора всех документов)

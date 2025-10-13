@@ -1,0 +1,240 @@
+groups:
+  - name: sensor_alerts
+    rules:
+      # Правила для датчика 000DE0163B57
+      - alert: HighPM25_000DE0163B57
+        expr: mqtt_000DE0163B57_pm25 < 0 or mqtt_000DE0163B57_pm25 > 400
+        for: 5m
+        labels:
+          severity: critical
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Критическое значение PM2.5: {{ $value }} µg/m³"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }} µg/m³
+            **Допустимый диапазон:** 0 - 400 µg/m³
+            **Датчик:** 000DE0163B57
+
+      - alert: LowHumidity_000DE0163B57
+        expr: mqtt_000DE0163B57_humidity < 10 or mqtt_000DE0163B57_humidity > 95
+        for: 5m
+        labels:
+          severity: warning
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️ Влажность вне диапазона: {{ $value }}%"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}%
+            **Допустимый диапазон:** 10% - 95%
+            **Датчик:** 000DE0163B57
+
+      - alert: HighTemperature_000DE0163B57
+        expr: mqtt_000DE0163B57_temperature_c < -10 or mqtt_000DE0163B57_temperature_c > 50
+        for: 5m
+        labels:
+          severity: critical
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Температура вне диапазона: {{ $value }}°C"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Допустимый диапазон:** -10°C - 50°C
+            **Датчик:** 000DE0163B57
+
+      - alert: DynamicHighTemperature_000DE0163B57
+        expr: mqtt_000DE0163B57_temperature_c > avg_over_time(mqtt_000DE0163B57_temperature_c[1h]) + (2 * stddev_over_time(mqtt_000DE0163B57_temperature_c[1h]))
+        for: 5m
+        labels:
+          severity: critical
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Температура превысила μ+2σ: {{ $value }}°C"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Среднее за час:** {{ with query "avg_over_time(mqtt_000DE0163B57_temperature_c[1h])" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Стандартное отклонение:** {{ with query "stddev_over_time(mqtt_000DE0163B57_temperature_c[1h])" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: DynamicLowTemperature_000DE0163B57
+        expr: mqtt_000DE0163B57_temperature_c < avg_over_time(mqtt_000DE0163B57_temperature_c[1h]) - (2 * stddev_over_time(mqtt_000DE0163B57_temperature_c[1h]))
+        for: 5m
+        labels:
+          severity: critical
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Температура ниже μ-2σ: {{ $value }}°C"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Среднее за час:** {{ with query "avg_over_time(mqtt_000DE0163B57_temperature_c[1h])" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Стандартное отклонение:** {{ with query "stddev_over_time(mqtt_000DE0163B57_temperature_c[1h])" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: HighHumidityQuantile_000DE0163B57
+        expr: mqtt_000DE0163B57_humidity > quantile_over_time(0.95, mqtt_000DE0163B57_humidity[1h])
+        for: 5m
+        labels:
+          severity: high
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️⚡ Влажность выше 95% квантиля: {{ $value }}%"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}%
+            **95% квантиль:** {{ with query "quantile_over_time(0.95, mqtt_000DE0163B57_humidity[1h])" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}%
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: LowHumidityQuantile_000DE0163B57
+        expr: mqtt_000DE0163B57_humidity < quantile_over_time(0.05, mqtt_000DE0163B57_humidity[1h])
+        for: 5m
+        labels:
+          severity: high
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️⚡ Влажность ниже 5% квантиля: {{ $value }}%"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}%
+            **5% квантиль:** {{ with query "quantile_over_time(0.05, mqtt_000DE0163B57_humidity[1h])" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}%
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: ErrorInSensor_000DE0163B57
+        expr: mqtt_000DE0163B57_alarm_status == 1
+        for: 2m
+        labels:
+          severity: critical
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Ошибка датчика 000DE0163B57"
+          description: |
+            **Статус тревоги:** Активирован
+            **Датчик:** 000DE0163B57
+
+      - alert: Heartbeat_000DE0163B57
+        expr: >
+          absent_over_time(mqtt_000DE0163B57_temperature_c[5m])
+          and
+          (time() - process_start_time_seconds{job="prometheus"} > 600)
+        for: 2m
+        labels:
+          severity: critical
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Нет данных от датчика 000DE0163B57"
+          description: |
+            **Статус:** Не отвечает более 5 минут
+            **Датчик:** 000DE0163B57
+
+      - alert: Temperature_Upper_Quantile_Breach
+        expr: |
+          mqtt_000DE0163B57_temperature_c > mqtt_000DE0163B57_temp_upper_q
+          or
+          mqtt_000DE0163B57_temperature_c < mqtt_000DE0163B57_temp_lower_q
+        for: 10m
+        labels:
+          severity: warning
+          metric_type: temperature
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️ Температура вне квантильных границ: {{ $value }}°C"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Допустимый диапазон:** {{ with query "mqtt_000DE0163B57_temp_lower_q" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C - {{ with query "mqtt_000DE0163B57_temp_upper_q" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: Temperature_Stddev_Breach
+        expr: |
+          mqtt_000DE0163B57_temperature_c > mqtt_000DE0163B57_temp_upper_std
+          or
+          mqtt_000DE0163B57_temperature_c < mqtt_000DE0163B57_temp_lower_std
+        for: 15m
+        labels:
+          severity: critical
+          metric_type: temperature
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "🚨 Температура за пределами μ±2σ: {{ $value }}°C"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Статистические границы:**
+            - Верхняя (μ+2σ): {{ with query "mqtt_000DE0163B57_temp_upper_std" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            - Нижняя (μ-2σ): {{ with query "mqtt_000DE0163B57_temp_lower_std" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: Humidity_Quantile_Breach
+        expr: |
+          mqtt_000DE0163B57_humidity > mqtt_000DE0163B57_humidity_upper_q
+          or
+          mqtt_000DE0163B57_humidity < mqtt_000DE0163B57_humidity_lower_q
+        for: 15m
+        labels:
+          severity: warning
+          metric_type: humidity
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️ Влажность вне исторического диапазона: {{ $value }}%"
+          description: |
+            **Текущее значение:** {{ $value | printf "%.1f" }}%
+            **Допустимый диапазон:** {{ with query "mqtt_000DE0163B57_humidity_lower_q" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}% - {{ with query "mqtt_000DE0163B57_humidity_upper_q" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}%
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: DewPoint_Rapid_Change
+        expr: abs(mqtt_000DE0163B57_dew_point_rate) > 0.3
+        for: 5m
+        labels:
+          severity: warning
+          metric_type: dew_point
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️ Резкое изменение точки росы: {{ $value }}°C/мин"
+          description: |
+            **Скорость изменения:** {{ $value | printf "%.2f" }}°C/мин
+            **Пороговое значение:** 0.3°C/мин
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: DewPoint_Quantile_Anomaly2
+        expr: |
+          (mqtt_000DE0163B57_dew_point_c > mqtt_000DE0163B57_dew_point_upper_q)
+          or
+          (mqtt_000DE0163B57_dew_point_c < mqtt_000DE0163B57_dew_point_lower_q)
+        for: 2m
+        labels:
+          severity: info
+          metric_type: dew_point
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "ℹ️ Точка росы в аномальном диапазоне: {{ $value }}°C"
+          description: |
+            **Оповещение статуса:** info
+            **Пояснение:** Точка росы вне допустимого диапазона
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Допустимый диапазон:** {{ with query "mqtt_000DE0163B57_dew_point_lower_q" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C - {{ with query "mqtt_000DE0163B57_dew_point_upper_q" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Датчик:** {{ $labels.sensor_id }}
+
+      - alert: DewPoint_Quantile_Proximity
+        expr: |
+          (mqtt_000DE0163B57_dew_point_c >= mqtt_000DE0163B57_dew_point_max_5m)
+          or
+          (mqtt_000DE0163B57_dew_point_c <= mqtt_000DE0163B57_dew_point_min_5m)
+        for: 5m
+        labels:
+          severity: warning
+          metric_type: dew_point
+          sensor_id: 000DE0163B57
+        annotations:
+          summary: "⚠️ Квантиль точки росы приближается к экстремальному значению"
+          description: |
+            **Оповещение статуса:** warning
+            **Пояснение:** Точка росы приближается к максимуму или минимуму за 5 месяцев
+            **Текущее значение:** {{ $value | printf "%.1f" }}°C
+            **Максимум за 5 месяцев:** {{ with query "mqtt_000DE0163B57_dew_point_max_5m" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Минимум за 5 месяцев:** {{ with query "mqtt_000DE0163B57_dew_point_min_5m" }}{{ . | first | value | printf "%.1f" }}{{ else }}N/A{{ end }}°C
+            **Датчик:** {{ $labels.sensor_id }}
+
+  - name: test_alerts
+    rules:
+      - alert: TestAlert
+        expr: anomaly_test == 1.0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Тестовый алерт сработал"
+          description: "Это тестовый алерт для проверки системы уведомлений. Значение anomaly_test: {{ $value }}."

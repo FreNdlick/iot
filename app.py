@@ -5,13 +5,14 @@ import subprocess
 from pathlib import Path
 from dotenv import load_dotenv
 from prometheus_client import start_http_server
-from metricsPromet import create_sensor_metrics
+from Analyz.metrics_process import create_sensor_metrics
 from Request import start_api_client
 from Telgram_bot.Bot_telegram import  main_bot
 
 # Инициализация переменных окружения
 
-load_dotenv()
+dotenv_path = Path("C:\PycharmProjects\Keys\.env")
+load_dotenv(dotenv_path)
 MONGO_URL = os.getenv("MONGO_URL")
 MONGO_DB = os.getenv("MONGO_DB")
 MONGO_COLLECTION = os.getenv("MONGO_COLLECTION")
@@ -28,8 +29,8 @@ def main():
     try:
         try:
             base = Path(__file__).parent
-            prometheus_path = base / "tools" / "prometheus-2.54.1.windows-amd64" / "prometheus.exe"
-            prometheus_config = base / "tools" / "prometheus-2.54.1.windows-amd64" / "prometheus.yml"
+            prometheus_path = base / "tools" / "prometheus-3.5.0.windows-amd64" / "prometheus.exe"
+            prometheus_config = base / "tools" / "prometheus-3.5.0.windows-amd64" / "prometheus.yml"
             subprocess.Popen([
                 str(prometheus_path),
                 f"--config.file={prometheus_config}"])
